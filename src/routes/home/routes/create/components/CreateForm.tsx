@@ -11,9 +11,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/components/ui/button";
-import { DicesIcon, HammerIcon } from "lucide-react";
+import { DicesIcon, HammerIcon, ShareIcon } from "lucide-react";
 import { useUser } from "@clerk/clerk-react";
-import { surpriseMePrompts } from "@/components/constant";
+import { surpriseMePrompts } from "@/constant";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -76,7 +76,17 @@ const CreateForm = ({ input, setInput }: CreateFormProps) => {
                     name="prompt"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="font-bold text-primary">Image Prompt</FormLabel>
+                            <FormLabel className="font-bold text-primary">Image Prompt
+                                <Button
+                                    size={"sm"}
+                                    type="button"
+                                    onClick={getRandomPrompt}
+                                    disabled={isLoading}
+                                    className="ml-1"
+                                >
+                                    <DicesIcon />Surprise Me
+                                </Button>
+                            </FormLabel>
                             <FormControl>
                                 <Textarea
                                     disabled={isLoading}
@@ -172,19 +182,19 @@ const CreateForm = ({ input, setInput }: CreateFormProps) => {
                         </FormItem>
                     )}
                 />
-                <div className="flex gap-x-4 justify-end">
+                <div className="grid grid-cols-2 gap-x-4">
                     <Button
                         type="submit"
                         disabled={isLoading}
                         size={"lg"}
-                        className="flex-1 max-w-80"><HammerIcon />Create</Button>
-                    <Button
-                        type="button"
-                        onClick={getRandomPrompt}
-                        disabled={isLoading}
-                        variant={"secondary"}
-                        size={"lg"}
-                        className="flex-1 max-w-80"><DicesIcon />Surprise Me</Button>
+                        className="w-full cursor-pointer"><HammerIcon />Generate
+                    </Button>
+                    <Button 
+                    type="button"
+                    disabled={isLoading || !input.prompt || input.prompt === ""}
+                    size={"lg"}
+                    className="w-full bg-indigo-500 hover:bg-indigo-600 cursor-pointer"
+                    ><ShareIcon/>Share with community</Button>
                 </div>
             </form>
         </Form>
