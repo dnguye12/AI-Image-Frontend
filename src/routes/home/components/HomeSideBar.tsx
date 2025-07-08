@@ -1,4 +1,4 @@
-import { PaintbrushVertical, Search } from "lucide-react"
+import { Home, PaintbrushVertical, Search } from "lucide-react"
 
 import {
     Sidebar,
@@ -24,8 +24,13 @@ import useTheme from "@/hooks/use-theme"
 
 const items = [
     {
+        title: "Home",
+        url: "/home",
+        icon: Home
+    },
+    {
         title: "Explore",
-        url: "/main/explore",
+        url: "/home/explore",
         icon: Search
     }
     ,
@@ -43,7 +48,7 @@ const HomeSideBar = () => {
             <SidebarContent className="pt-6 px-6">
                 <SidebarGroup>
                     <SidebarGroupLabel className="mb-3">
-                        <h1 className="text-xl font-semibold tracking-wide">Image Gen</h1>
+                        <a href="/home" className="text-xl font-semibold tracking-wide">Image Gen</a>
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>

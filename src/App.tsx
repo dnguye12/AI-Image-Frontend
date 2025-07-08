@@ -2,11 +2,13 @@ import { Route, Routes, useNavigate } from "react-router"
 import WelcomePage from "./routes/welcome/Welcome"
 import HomePage from "./routes/home/Home"
 import { useUser } from "@clerk/clerk-react"
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, type ReactNode } from "react"
 import SignInPage from "./routes/sign-in/SignInPage"
 import HomeLayout from "./routes/home/HomeLayout"
 import CreatePage from "./routes/home/routes/create/Create"
 import { getUser, postUser } from "./services/user"
+import ExplorePage from "./routes/home/routes/explore/Explore"
+import SignUpPage from "./routes/sign-up/SignUpPage"
 
 interface RequireAuthProps {
   children: ReactNode
@@ -14,7 +16,6 @@ interface RequireAuthProps {
 
 const RequireAuth = ({ children }: RequireAuthProps) => {
   const { isSignedIn, user, isLoaded } = useUser()
-  const [checked, setChecked] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -24,14 +25,13 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   }, [isLoaded, isSignedIn, navigate])
 
   useEffect(() => {
-    if (user && !checked) {
+    if (user) {
       const checkProfile = async () => {
         try {
           const request = await getUser(user.id)
           if (request?.status === 204) {
             await postUser(user.id)
           }
-          setChecked(true)
         } catch (error) {
           console.log(error)
         }
@@ -39,7 +39,7 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
 
       checkProfile()
     }
-  }, [user, checked])
+  }, [user])
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -57,6 +57,7 @@ const App = () => {
     <Routes>
       <Route index element={<WelcomePage />} />
       <Route path="/sign-in/*" element={<SignInPage />} />
+      <Route path="/sign-up/*" element={<SignUpPage />} />
       <Route path="/home" element={
         <RequireAuth>
           <HomeLayout />
@@ -64,6 +65,7 @@ const App = () => {
       }>
         <Route index element={<HomePage />} />
         <Route path="create" element={<CreatePage />} />
+        <Route path="explore" element={<ExplorePage />} />
       </Route>
     </Routes>
   )

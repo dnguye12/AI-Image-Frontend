@@ -1,13 +1,14 @@
 import { usePollinationsImage } from '@pollinations/react';
-import type { CreateFormProps } from '../types';
+import type { CreateImageProps } from '../types';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
     Dialog,
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { useEffect } from 'react';
 
-const CreateImages = ({ input }: CreateFormProps) => {
+const CreateImages = ({ input, imageLink, setImageLink }: CreateImageProps) => {
 
     const imageUrl = usePollinationsImage(input.prompt, {
         width: input.width,
@@ -16,6 +17,12 @@ const CreateImages = ({ input }: CreateFormProps) => {
         nologo: true,
         model: input.model,
     })
+
+    useEffect(() => {
+        if(imageLink !== imageUrl) {
+            setImageLink(imageUrl)
+        }
+    }, [imageUrl, imageLink, setImageLink])
 
     return (
         <div className="w-full relative">

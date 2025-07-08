@@ -10,5 +10,12 @@ export interface InputProps {
 
 export interface CreateFormProps {
     input: InputProps,
-    setInput: Dispatch<SetStateAction<InputProps>>
+    setInput: Dispatch<SetStateAction<InputProps>>,
+    imageLink: string
+}
+
+export interface CreateImageProps {
+    input: InputProps,
+    imageLink: string,
+    setImageLink: Dispatch<SetStateAction<string>>
 }

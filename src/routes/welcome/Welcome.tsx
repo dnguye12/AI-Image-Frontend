@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Dither from "../../components/react-bits/Dither";
 import { Button } from "@/components/ui/button";
-import { LogInIcon, MailsIcon, SearchIcon, UserIcon } from "lucide-react";
+import { HomeIcon, LogInIcon, MailsIcon, SearchIcon } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useClerk, useUser } from "@clerk/clerk-react";
 
@@ -44,8 +44,8 @@ const WelcomePage = () => {
                             )
                             :
                             (
-                                <Button onClick={() => openUserProfile()} size={"lg"} className={cn(" rounded-full border hover:bg-sky-700 border-sky-600 cursor-pointer", isLoading && "opacity-30 cursor-default pointer-events-none select-none")} asChild>
-                                    <span className=" inline-flex items-center text-neutral-100 gap-x-1"><UserIcon /> My Profile</span>
+                                <Button onClick={() => openUserProfile()} size={"lg"} className={cn(" rounded-full border hover:bg-green-700 border-green-600 cursor-pointer", isLoading && "opacity-30 cursor-default pointer-events-none select-none")} asChild>
+                                    <a href={"/home"} className=" inline-flex items-center text-neutral-100 gap-x-1"><HomeIcon/> Homepage</a>
                                 </Button>
                             )
                     }

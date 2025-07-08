@@ -7,6 +7,16 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,9 +28,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import type { CreateFormProps } from "../types";
+import { postImage } from "@/services/image";
 
-const CreateForm = ({ input, setInput }: CreateFormProps) => {
-    const { isLoaded } = useUser()
+const CreateForm = ({ input, setInput, imageLink }: CreateFormProps) => {
+    const { isLoaded, user } = useUser()
 
     const formSchema = z.object({
         prompt: z.string().min(1, {
@@ -36,7 +47,7 @@ const CreateForm = ({ input, setInput }: CreateFormProps) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             prompt: "",
-            model: "flux",
+            model: "turbo",
             width: 480,
             height: 720,
             seed: -1
@@ -46,8 +57,16 @@ const CreateForm = ({ input, setInput }: CreateFormProps) => {
     const isLoading = form.formState.isSubmitting && isLoaded
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        if (JSON.stringify(input) !== JSON.stringify(values)) {
+        if (JSON.stringify(input) !== JSON.stringify(values) && user) {
             setInput(values)
+
+            //await postImage(values.prompt, values.model, values.width, values.height, values.seed, user.id)
+        }
+    }
+
+    const onShare = async () => {
+        if (user && imageLink) {
+            await postImage(input.prompt, input.model, input.width, input.height, input.seed, user.id, imageLink)
         }
     }
 
@@ -114,8 +133,8 @@ const CreateForm = ({ input, setInput }: CreateFormProps) => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="flux">Flux</SelectItem>
                                     <SelectItem value="turbo">Turbo</SelectItem>
+                                    <SelectItem value="flux">Flux</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormDescription>
@@ -182,19 +201,39 @@ const CreateForm = ({ input, setInput }: CreateFormProps) => {
                         </FormItem>
                     )}
                 />
-                <div className="grid grid-cols-2 gap-x-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                     <Button
                         type="submit"
                         disabled={isLoading}
                         size={"lg"}
                         className="w-full cursor-pointer"><HammerIcon />Generate
                     </Button>
-                    <Button 
-                    type="button"
-                    disabled={isLoading || !input.prompt || input.prompt === ""}
-                    size={"lg"}
-                    className="w-full bg-indigo-500 hover:bg-indigo-600 cursor-pointer"
-                    ><ShareIcon/>Share with community</Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button
+                                type="button"
+                                disabled={isLoading || !input.prompt || input.prompt === "" || imageLink === ""}
+                                size={"lg"}
+                                className="w-full bg-indigo-500 hover:bg-indigo-600 cursor-pointer"
+                            ><ShareIcon />Share with community</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Read Me!</DialogTitle>
+                                <DialogDescription>
+                                    Please make sure the image is fully loaded before sharing. This might takes a few seconds.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button variant={"outline"}>Cancel</Button>
+                                </DialogClose>
+                                <DialogClose asChild>
+                                    <Button onClick={onShare}  type="button">Share image</Button>
+                                </DialogClose>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </form>
         </Form>
