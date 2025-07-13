@@ -43,7 +43,7 @@ const CreateImages = ({ input, imageLink, setImageLink }: CreateImageProps) => {
                             <DialogContent className='flex flex-col w-full h-[90vh] !max-w-[90vw] p-0 overflow-hidden'>
                                 <img
                                     src={imageUrl}
-                                    className="w-auto h-full object-cover"
+                                    className="object-center object-contain h-full w-auto"
                                 />
                             </DialogContent>
                         </Dialog>

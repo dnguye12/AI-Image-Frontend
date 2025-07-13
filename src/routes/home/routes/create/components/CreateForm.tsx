@@ -50,7 +50,7 @@ const CreateForm = ({ input, setInput, imageLink }: CreateFormProps) => {
             model: "turbo",
             width: 480,
             height: 720,
-            seed: -1
+            seed: 42
         }
     })
 
@@ -59,8 +59,6 @@ const CreateForm = ({ input, setInput, imageLink }: CreateFormProps) => {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         if (JSON.stringify(input) !== JSON.stringify(values) && user) {
             setInput(values)
-
-            //await postImage(values.prompt, values.model, values.width, values.height, values.seed, user.id)
         }
     }
 
@@ -196,7 +194,7 @@ const CreateForm = ({ input, setInput, imageLink }: CreateFormProps) => {
                                 />
                             </FormControl>
                             <FormDescription>
-                                Different seed gives different image, -1 for random seed.
+                                Different seed gives different image.
                             </FormDescription>
                         </FormItem>
                     )}
