@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { ClockIcon, DicesIcon, FlameIcon } from "lucide-react"
+import ImageModal from "./components/ImageModal";
 
 const ExplorePage = () => {
     const [images, setImages] = useState<ImageProps[]>([])
@@ -22,6 +23,8 @@ const ExplorePage = () => {
     const [filter, setFilter] = useState<string>("popular")
     const [searchPrompt, setSearchPrompt] = useState<string>("")
     const [isSearching, setIsSearching] = useState<boolean>(false)
+
+    const [selectedImage, setSelectedImage] = useState<ImageProps | null>(null)
 
     const handleSearch = useDebouncedCallback((value) => {
         if (value !== searchPrompt) {
@@ -151,10 +154,12 @@ const ExplorePage = () => {
                     (
                         <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-1 pt-8 pb-12">
                             {
-                                images.map((image) => (<ImageCard image={image} />))
+                                images.map((image) => (<ImageCard image={image} setSelectedImage={setSelectedImage} />))
                             }
                         </div>
-                    )}
+                    )
+            }
+            <ImageModal selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
         </section>
     )
 }
