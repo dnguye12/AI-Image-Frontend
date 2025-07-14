@@ -8,7 +8,7 @@ import type { UserResource } from "@clerk/types";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { ImageDownIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { dislikeImage, likeImage } from "@/services/image";
 
 interface ImageModalProps {
@@ -143,6 +143,16 @@ const ImageModal = ({ selectedImage, setSelectedImage }: ImageModalProps) => {
                         <div className="grid grid-cols-3 gap-2">
                             <Button onClick={handleLikeImage} variant={liked ? "default" : "secondary"} disabled={isLiking}><ThumbsUpIcon /> {likes}</Button>
                             <Button onClick={handleDislikeImage} variant={disliked ? "default" : "secondary"} disabled={isLiking}><ThumbsDownIcon /> {dislikes}</Button>
+                            <Button variant={"secondary"} asChild>
+                                <a
+                                    href={`${import.meta.env.VITE_API_URL}/image/${selectedImage.id}/image`}
+                                    download={`${selectedImage.id}.jpeg`}
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    <ImageDownIcon /> Download
+                                </a>
+                            </Button>
                         </div>
                     </div>
                 </div>
