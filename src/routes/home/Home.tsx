@@ -20,7 +20,7 @@ const HomePage = () => {
                     <h3 className="text-lg font-semibold text-foreground inline-flex gap-2"><ThumbsUpIcon /> Start now using These Two Buttons</h3>
                     <div className="mt-2 flex items-center gap-2">
                         <Button size={"lg"} className="cursor-pointer">
-                            <a href="/home/create" className="inline-flex gap-1 items-center"><SearchIcon className="!w-[20px] !h-[20px]" /> Explore</a>
+                            <a href="/home/explore" className="inline-flex gap-1 items-center"><SearchIcon className="!w-[20px] !h-[20px]" /> Explore</a>
                         </Button>
                         <Button size={"lg"} className="cursor-pointer">
                             <a href="/home/create" className="inline-flex gap-1 items-center"><PaintbrushVerticalIcon className="!w-[20px] !h-[20px]" /> Create Image</a>

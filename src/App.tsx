@@ -58,13 +58,9 @@ const App = () => {
       <Route index element={<WelcomePage />} />
       <Route path="/sign-in/*" element={<SignInPage />} />
       <Route path="/sign-up/*" element={<SignUpPage />} />
-      <Route path="/home" element={
-        <RequireAuth>
-          <HomeLayout />
-        </RequireAuth>
-      }>
+      <Route path="/home" element={<HomeLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="create" element={<CreatePage />} />
+        <Route path="create" element={<RequireAuth><CreatePage /></RequireAuth>} />
         <Route path="explore" element={<ExplorePage />} />
       </Route>
     </Routes>
