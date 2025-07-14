@@ -156,7 +156,7 @@ const ImageModal = ({ selectedImage, setSelectedImage }: ImageModalProps) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col lg:hidden w-screen h-screen max-h-screen bg-background p-6 inset-0 justify-between">
+                <div className="flex flex-col lg:hidden w-screen h-screen max-h-screen !box-border bg-background p-6 inset-0 justify-between overflow-y-scroll">
                     <div className="flex-1">
                         <img
                             crossOrigin="anonymous"
@@ -164,13 +164,27 @@ const ImageModal = ({ selectedImage, setSelectedImage }: ImageModalProps) => {
                             className="w-full h-full object-contain"
                         />
                     </div>
-                    <div>
+                    <div className="flex flex-col mt-6">
                         <div className="inline-flex items-center gap-2 mb-2">
                             <img src={user?.imageUrl} className=" rounded-full w-14 h-auto border" />
                             <span className="font-semibold text-primary">{user?.fullName}</span>
                         </div>
                         <p className="mb-2">{selectedImage.prompt}</p>
-                        <p className="text-muted-foreground">Created at {moment(selectedImage.createdAt).format("DD/MM/YYYY, hh:mm:ss")}</p>
+                        <p className="text-muted-foreground text-sm mb-4">Created at {moment(selectedImage.createdAt).format("DD/MM/YYYY, hh:mm:ss")}</p>
+                        <div className="grid grid-cols-3 gap-2">
+                            <Button onClick={handleLikeImage} variant={liked ? "default" : "secondary"} disabled={isLiking}><ThumbsUpIcon /> {likes}</Button>
+                            <Button onClick={handleDislikeImage} variant={disliked ? "default" : "secondary"} disabled={isLiking}><ThumbsDownIcon /> {dislikes}</Button>
+                            <Button variant={"secondary"} asChild>
+                                <a
+                                    href={`${import.meta.env.VITE_API_URL}/image/${selectedImage.id}/image`}
+                                    download={`${selectedImage.id}.jpeg`}
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    <ImageDownIcon /> Download
+                                </a>
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </DialogContent>
