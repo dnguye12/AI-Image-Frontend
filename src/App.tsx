@@ -14,6 +14,29 @@ interface RequireAuthProps {
   children: ReactNode
 }
 
+const ProfileChecker = ({ children }: RequireAuthProps) => {
+  const { isLoaded, user } = useUser()
+
+  useEffect(() => {
+    if (isLoaded && user)  {
+      const checkProfile = async () => {
+        try {
+          const request = await getUser(user.id)
+          if (!request) {
+            await postUser(user.id, user.fullName || "", user.imageUrl, user.username || "")
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      checkProfile()
+    }
+  }, [isLoaded, user])
+
+  return children
+}
+
 const RequireAuth = ({ children }: RequireAuthProps) => {
   const { isSignedIn, user, isLoaded } = useUser()
   const navigate = useNavigate()
@@ -23,23 +46,6 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
       navigate("/sign-in"); // Redirects to sign-in if the user is not signed in.
     }
   }, [isLoaded, isSignedIn, navigate])
-
-  useEffect(() => {
-    if (user) {
-      const checkProfile = async () => {
-        try {
-          const request = await getUser(user.id)
-          if (request?.status === 204) {
-            await postUser(user.id)
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      checkProfile()
-    }
-  }, [user])
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -52,19 +58,24 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   return children;
 }
 const App = () => {
+  const { user } = useUser()
 
-  return (
-    <Routes>
-      <Route index element={<WelcomePage />} />
-      <Route path="/sign-in/*" element={<SignInPage />} />
-      <Route path="/sign-up/*" element={<SignUpPage />} />
-      <Route path="/home" element={<HomeLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="create" element={<RequireAuth><CreatePage /></RequireAuth>} />
-        <Route path="explore" element={<ExplorePage />} />
-      </Route>
-    </Routes>
-  )
+
+    return (
+
+      <ProfileChecker>
+        <Routes>
+          <Route index element={<WelcomePage />} />
+          <Route path="/sign-in/*" element={<SignInPage />} />
+          <Route path="/sign-up/*" element={<SignUpPage />} />
+          <Route path="/home" element={<HomeLayout user={user} />}>
+            <Route index element={<HomePage />} />
+            <Route path="create" element={<RequireAuth><CreatePage /></RequireAuth>} />
+            <Route path="explore" element={<ExplorePage />} />
+          </Route>
+        </Routes>
+      </ProfileChecker>
+    )
 }
 
 export default App

@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ImageDownIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { dislikeImage, likeImage } from "@/services/image";
+import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router";
 
 interface ImageModalProps {
     selectedImage: ImageProps | null;
@@ -17,7 +19,10 @@ interface ImageModalProps {
 }
 
 const ImageModal = ({ selectedImage, setSelectedImage }: ImageModalProps) => {
-    const [user, setUser] = useState<UserResource | null>(null)
+    const { user, isSignedIn } = useUser()
+    const navigate = useNavigate()
+
+    const [creator, setCreator] = useState<UserResource | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const [likes, setLikes] = useState<number>(-1)
@@ -28,31 +33,33 @@ const ImageModal = ({ selectedImage, setSelectedImage }: ImageModalProps) => {
 
     useEffect(() => {
         if (isLoading && selectedImage && selectedImage.createdBy) {
-            const userId = selectedImage.createdBy
-            const findUser = async () => {
+            const creatorId = selectedImage.createdBy
+            const findCreator = async () => {
                 try {
-                    const helper = await getUser(userId)
+                    const helper = await getUser(creatorId)
 
-                    setUser(helper)
+                    setCreator(helper)
                 } catch (error) {
                     console.log(error)
                 } finally {
                     setIsLoading(false)
                 }
             }
-            findUser()
+            findCreator()
         }
     }, [isLoading, selectedImage])
 
     useEffect(() => {
-        if (selectedImage && user) {
+        if (selectedImage && creator) {
             setLikes(selectedImage.likedBy.length)
             setDislikes(selectedImage.dislikedBy.length)
 
-            setLiked(selectedImage.likedBy.includes(user.id))
-            setDisliked(selectedImage.dislikedBy.includes(user.id))
+            if (isSignedIn && user) {
+                setLiked(selectedImage.likedBy.includes(user.id))
+                setDisliked(selectedImage.dislikedBy.includes(user.id))
+            }
         }
-    }, [selectedImage, user])
+    }, [selectedImage, creator, isSignedIn, user])
 
     if (!selectedImage) {
         return null
@@ -64,60 +71,68 @@ const ImageModal = ({ selectedImage, setSelectedImage }: ImageModalProps) => {
     }
 
     const handleLikeImage = async () => {
-        if (disliked) {
-            setDisliked(false)
-            setLiked(true)
-            setDislikes((prev) => prev - 1)
-            setLikes((prev) => prev + 1)
-        } else if (liked) {
-            setLiked(false)
-            setDisliked(false)
-            setLikes((prev) => prev - 1)
-        } else {
-            setLiked(true)
-            setDisliked(false)
-            setLikes((prev) => prev + 1)
-        }
-
-        setIsLiking(true)
-        if (selectedImage.createdBy) {
-            try {
-                const helper = await likeImage(selectedImage.id, selectedImage.createdBy)
-                setSelectedImage(helper)
-            } catch (error) {
-                console.log(error)
-            } finally {
-                setIsLiking(false)
+        if (user) {
+            if (disliked) {
+                setDisliked(false)
+                setLiked(true)
+                setDislikes((prev) => prev - 1)
+                setLikes((prev) => prev + 1)
+            } else if (liked) {
+                setLiked(false)
+                setDisliked(false)
+                setLikes((prev) => prev - 1)
+            } else {
+                setLiked(true)
+                setDisliked(false)
+                setLikes((prev) => prev + 1)
             }
+
+            setIsLiking(true)
+            if (selectedImage.createdBy) {
+                try {
+                    const helper = await likeImage(selectedImage.id, user.id)
+                    setSelectedImage(helper)
+                } catch (error) {
+                    console.log(error)
+                } finally {
+                    setIsLiking(false)
+                }
+            }
+        } else {
+            navigate("/sign-in")
         }
     }
 
     const handleDislikeImage = async () => {
-        if (liked) {
-            setLiked(false)
-            setDisliked(true)
-            setLikes((prev) => prev - 1)
-            setDislikes((prev) => prev + 1)
-        } else if (disliked) {
-            setLiked(false)
-            setDisliked(false)
-            setDislikes((prev) => prev - 1)
-        } else {
-            setLiked(false)
-            setDisliked(true)
-            setDislikes((prev) => prev + 1)
-        }
-
-        setIsLiking(true)
-        if (selectedImage.createdBy) {
-            try {
-                const helper = await dislikeImage(selectedImage.id, selectedImage.createdBy)
-                setSelectedImage(helper)
-            } catch (error) {
-                console.log(error)
-            } finally {
-                setIsLiking(false)
+        if (user) {
+            if (liked) {
+                setLiked(false)
+                setDisliked(true)
+                setLikes((prev) => prev - 1)
+                setDislikes((prev) => prev + 1)
+            } else if (disliked) {
+                setLiked(false)
+                setDisliked(false)
+                setDislikes((prev) => prev - 1)
+            } else {
+                setLiked(false)
+                setDisliked(true)
+                setDislikes((prev) => prev + 1)
             }
+
+            setIsLiking(true)
+            if (selectedImage.createdBy) {
+                try {
+                    const helper = await dislikeImage(selectedImage.id, user.id)
+                    setSelectedImage(helper)
+                } catch (error) {
+                    console.log(error)
+                } finally {
+                    setIsLiking(false)
+                }
+            }
+        } else {
+            navigate("/sign-in")
         }
     }
 

@@ -121,3 +121,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.cl-userButtonBox {
+  flex-direction: row-reverse;
+  padding-block: 8px;
+  padding-inline: 12px;
+  width: 100%;
+}

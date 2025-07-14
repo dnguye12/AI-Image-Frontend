@@ -14,11 +14,14 @@ export const getUser = async (id: string) => {
     }
 }
 
-export const postUser = async (id: string) => {
+export const postUser = async (id: string, fullName: string, imageUrl: string, username: string) => {
     const query = baseUrl + `/user`
     try {
         const request = await axios.post(query, {
-            id
+            id,
+            fullName, 
+            imageUrl, 
+            username
         })
         return request.data
     } catch (error) {
