@@ -128,3 +128,7 @@
   padding-inline: 12px;
   width: 100%;
 }
+
+.cl-userButtonOuterIdentifier {
+  @apply text-secondary-foreground
+}
