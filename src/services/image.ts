@@ -76,3 +76,33 @@ export const postImage = async (prompt: string, model: string, width: number, he
         return null
     }
 }
+
+export const likeImage = async(imageId: string, userId: string) => {
+    const query = baseUrl + `/image/${imageId}/like`
+
+    try {
+        const request = await axios.patch(query, {
+            userId
+        })
+
+        return request.data
+    }catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
+export const dislikeImage = async(imageId: string, userId: string) => {
+    const query = baseUrl + `/image/${imageId}/dislike`
+
+    try {
+        const request = await axios.patch(query, {
+            userId
+        })
+
+        return request.data
+    }catch (error) {
+        console.log(error)
+        return null
+    }
+}
